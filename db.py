@@ -18,14 +18,16 @@ def get_gifts():
 def update_gift(item, state_key, status: bool):
     st.write(f"Tu elección: {item}")
     senders = st.text_input("Quién eligió este regalo?: ")
+    st.session_state[state_key] = "Libre 🟢"
     if st.button("Confirmar"):
+        try:
+            del st.session_state[state_key]
+        except:
+            ...
         collection = client["wedding"]["jjgifts"]
 
         collection.update_one(
             {"uuid": state_key},  # Filter
             {"$set": {"reserved": status}}  # Update operation
         )
-        st.rerun()
-    elif st.button("Elegir otro regalo"):
-        st.session_state[state_key] = "Libre 🟢"
         st.rerun()
