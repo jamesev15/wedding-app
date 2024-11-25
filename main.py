@@ -1,3 +1,4 @@
+import time
 import streamlit as st
 import pandas as pd
 from db import get_gifts, update_gift
@@ -10,10 +11,11 @@ st.text('- Si deseas regalarnos alguno de los detalles listados, entonces cambia
 st.text("- Si no encuentras el regalo perfecto en nuestra lista, no te preocupes. También puedes hacernos un regalo económico, que será igual de apreciado 🌟")
 
 
-def on_state_change(state_key):
+def on_state_change(item, state_key):
     new_state = st.session_state[state_key]
     status = True if new_state == "Reservado 🔴" else False
-    update_gift(state_key, status)
+    update_gift(item, state_key, status)
+    
 
 data = get_gifts()
 
@@ -31,6 +33,7 @@ for index, row in df.iterrows():
             index=0 if row["reserved"] == False else 1,
             key=row["uuid"],
             on_change=on_state_change,
-            args=(row["uuid"], )
+            args=(row["gift"], row["uuid"] ),
+            disabled=row["reserved"],
         )
     st.markdown("---")
